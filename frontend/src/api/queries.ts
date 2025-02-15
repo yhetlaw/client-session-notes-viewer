@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { ClientT } from '../types/misc';
+import { ClientT, SessionNoteT } from '../types';
 
 export const useClients = () => {
   return useQuery({
@@ -19,13 +19,26 @@ export const useClient = (id: string) => {
 export const useSessionNotes = () => {
   return useQuery({
     queryKey: ['sessionNotes'],
-    queryFn: () => axios.get('http://localhost:3001/sessionNotes').then(({ data }) => data as ClientT[]),
+    queryFn: () => axios.get('http://localhost:3001/sessionNotes').then(({ data }) => data as SessionNoteT[]),
   });
 };
 
 export const useSessionNote = (id: string) => {
   return useQuery({
     queryKey: ['sessionNotes', id],
-    queryFn: () => axios.get(`http://localhost:3001/sessionNotes/${id}`).then(({ data }) => data as ClientT),
+    queryFn: () => axios.get(`http://localhost:3001/sessionNotes/${id}`).then(({ data }) => data as SessionNoteT),
+  });
+};
+
+export const useAddSessionNote = () => {
+  return useMutation({
+    mutationFn: ({ clientId, note }: { clientId: number; note: string }) => axios.post(`http://localhost:3001/sessionNotes`, { clientId, note }),
+  });
+};
+
+export const useClientSessionNotes = (clientId: number) => {
+  return useQuery({
+    queryKey: ['sessionNotes', 'client', clientId],
+    queryFn: () => axios.get(`http://localhost:3001/sessionNotes?clientId=${clientId}`).then(({ data }) => data as SessionNoteT[]),
   });
 };
