@@ -32,7 +32,7 @@ export const useSessionNote = (id: string) => {
 
 export const useAddSessionNote = () => {
   return useMutation({
-    mutationFn: ({ clientId, note }: { clientId: number; note: string }) => axios.post(`http://localhost:3001/sessionNotes`, { clientId, note }),
+    mutationFn: ({ clientId, note, date }: { clientId: number; note: string; date: string }) => axios.post(`http://localhost:3001/sessionNotes`, { clientId, note, date }),
   });
 };
 
