@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { ClientT, SessionNoteT } from '../types';
+import { ClientT, SessionNoteT } from '../utils/types';
 
 export const useClients = () => {
   return useQuery({
@@ -32,13 +32,22 @@ export const useSessionNote = (id: string) => {
 
 export const useAddSessionNote = () => {
   return useMutation({
-    mutationFn: ({ clientId, note, date }: { clientId: number; note: string; date: string }) => axios.post(`http://localhost:3001/sessionNotes`, { clientId, note, date }),
+    mutationFn: ({ clientId, note, date }: { clientId: number; note: string; date: string }) =>
+      axios.post(`http://localhost:3001/sessionNotes`, { clientId, note, date }),
   });
 };
 
 export const useClientSessionNotes = (clientId: number) => {
   return useQuery({
     queryKey: ['sessionNotes', 'client', clientId],
-    queryFn: () => axios.get(`http://localhost:3001/sessionNotes?clientId=${clientId}`).then(({ data }) => data as SessionNoteT[]),
+    queryFn: () =>
+      axios.get(`http://localhost:3001/sessionNotes?clientId=${clientId}`).then(({ data }) => data as SessionNoteT[]),
+    enabled: !!clientId,
+  });
+};
+
+export const useAddClient = () => {
+  return useMutation({
+    mutationFn: (data: { name: string; email: string }) => axios.post(`http://localhost:3001/clients`, data),
   });
 };

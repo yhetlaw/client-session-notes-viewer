@@ -70,7 +70,13 @@ export function ClientDetailsPage() {
               },
             }}
           >
-            {sessionNotes ? (
+            {!client ? (
+              <Typography color="text.secondary">Loading client...</Typography>
+            ) : !sessionNotes ? (
+              <Typography color="text.secondary">Loading session notes...</Typography>
+            ) : sessionNotes.length === 0 ? (
+              <Typography color="text.secondary">No session notes available yet.</Typography>
+            ) : (
               sessionNotes.map((note) => (
                 <Paper
                   key={note.id}
@@ -92,8 +98,6 @@ export function ClientDetailsPage() {
                   <Typography>{note.note}</Typography>
                 </Paper>
               ))
-            ) : (
-              <Typography color="text.secondary">No session notes available yet.</Typography>
             )}
           </Box>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} mt={3}>
