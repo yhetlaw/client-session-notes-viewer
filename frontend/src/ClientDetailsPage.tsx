@@ -1,24 +1,35 @@
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useAddSessionNote, useClient, useClientSessionNotes } from './api/queries';
+import { useForm } from 'react-hook-form';
 
 export function ClientDetailsPage() {
   const { id } = useParams();
   const { data: client } = useClient(id!);
-  const [newNote, setNewNote] = useState('');
-  const { mutate: addSessionNote, isPending, isSuccess } = useAddSessionNote();
-  const { data: sessionNotes, refetch } = useClientSessionNotes(client?.id as number);
+  const { mutate: addSessionNote, isPending, isSuccess: isNoteAdded } = useAddSessionNote();
+  const { data: sessionNotes, refetch: refetchSessionNotes } = useClientSessionNotes(client?.id as number);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<{ note: string }>({
+    defaultValues: { note: '' },
+  });
 
-  const handleSubmitNote = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newSessionNote = { clientId: client?.id ?? 0, note: newNote, date: new Date().toISOString() };
-    if (newNote.trim()) addSessionNote(newSessionNote, { onSuccess: () => setNewNote('') });
+  const onSubmit = (data: { note: string }) => {
+    const newSessionNote = {
+      clientId: client?.id ?? 0,
+      note: data.note,
+      date: new Date().toISOString(),
+    };
+    addSessionNote(newSessionNote, { onSuccess: () => reset() });
   };
 
   useEffect(() => {
-    refetch();
-  }, [isSuccess, refetch]);
+    refetchSessionNotes();
+  }, [isNoteAdded, refetchSessionNotes]);
 
   if (!client) return <Typography>Client not found</Typography>;
 
@@ -38,29 +49,69 @@ export function ClientDetailsPage() {
           <Typography variant="h6" mb={2}>
             Session Notes
           </Typography>
-          {sessionNotes ? (
-            sessionNotes.map((note) => (
-              <Paper key={note.id} sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1}>
-                  {new Date(note.date).toLocaleDateString()}
-                </Typography>
-                <Typography>{note.note}</Typography>
-              </Paper>
-            ))
-          ) : (
-            <Typography color="text.secondary">No session notes available yet.</Typography>
-          )}
-          <Box component="form" onSubmit={handleSubmitNote} mt={3}>
+          <Box
+            sx={{
+              maxHeight: '400px',
+              overflowY: 'auto',
+              mb: 3,
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: '#f1f1f1',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#888',
+                borderRadius: '4px',
+                '&:hover': {
+                  background: '#666',
+                },
+              },
+            }}
+          >
+            {sessionNotes ? (
+              sessionNotes.map((note) => (
+                <Paper
+                  key={note.id}
+                  elevation={1}
+                  sx={{
+                    p: 2,
+                    mb: 2,
+                    bgcolor: 'grey.50',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateX(4px)',
+                      bgcolor: 'grey.100',
+                    },
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary" display="block" mb={1}>
+                    {new Date(note.date).toLocaleDateString()}
+                  </Typography>
+                  <Typography>{note.note}</Typography>
+                </Paper>
+              ))
+            ) : (
+              <Typography color="text.secondary">No session notes available yet.</Typography>
+            )}
+          </Box>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} mt={3}>
             <TextField
               fullWidth
               multiline
               rows={3}
               label="New Session Note"
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
+              {...register('note', { required: true })}
               margin="normal"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey && isValid) {
+                  e.preventDefault();
+                  handleSubmit(onSubmit)();
+                }
+              }}
             />
-            <Button type="submit" variant="contained" disabled={!newNote.trim() || isPending}>
+            <Button type="submit" variant="contained" disabled={!isValid || isPending}>
               Add Note
             </Button>
           </Box>
