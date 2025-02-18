@@ -27,3 +27,8 @@ export type AddClientModalProps = {
   onSubmit: (data: NewClientForm) => void;
   isSubmitting: boolean;
 };
+
+export type SessionNoteFormProps = {
+  onSubmit: (data: { note: string }) => void;
+  isSubmitting: boolean;
+};

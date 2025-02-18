@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import React from 'react';
 import { AddClientForm } from './AddClientForm';
 import { NewClientForm } from '../utils/types';
-import { FLOATING_BUTTON_STYLES } from '../utils/misc';
+import { FLOATING_BUTTON_STYLES } from '../utils/common';
 import { AddClientModal } from './AddClientModal';
 import { ClientsList } from './ClientsList';
 

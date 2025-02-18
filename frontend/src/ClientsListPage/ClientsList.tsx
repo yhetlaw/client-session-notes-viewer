@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { ClientT } from '../utils/types';
 import { ClientCard } from './ClientCard';
-import { SCROLL_BAR_STYLES } from '../utils/misc';
+import { SCROLL_BAR_STYLES } from '../utils/common';
 
 export const ClientsList = ({ clients }: { clients: ClientT[] }) => (
   <Box

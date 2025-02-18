@@ -4,7 +4,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { Box, Link as MuiLink } from '@mui/material';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import { ClientDetailsPage } from './ClientDetailsPage';
+import { ClientDetailsPage } from './ClientDetailsPage/ClientDetailsPage';
 import { Toaster } from 'sonner';
 import { ClientsListPage } from './ClientsListPage/ClientsListPage';
 
