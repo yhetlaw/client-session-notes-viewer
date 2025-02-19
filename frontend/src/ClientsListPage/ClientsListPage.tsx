@@ -11,7 +11,7 @@ import { ClientsList } from './ClientsList';
 
 export function ClientsListPage() {
   const navigate = useNavigate();
-  const { data: clients } = useClients();
+  const { data: clients, isLoading } = useClients();
   const { mutate: addClient, isPending } = useAddClient();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const theme = useTheme();
@@ -33,7 +33,7 @@ export function ClientsListPage() {
         <Typography variant="h5" mb={3}>
           Clients
         </Typography>
-        <ClientsList clients={clients ?? []} />
+        <ClientsList clients={clients ?? []} isLoading={isLoading} />
       </Box>
       {isMobile ? (
         <>

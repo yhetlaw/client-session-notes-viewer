@@ -1,9 +1,10 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { SessionNoteT } from '../utils/types';
 import { SCROLL_BAR_STYLES } from '../utils/common';
+import { SessionNotesSkeleton } from './SessionNotesSkeleton';
 
 export const SessionNotesList = ({ notes, isLoading }: { notes?: SessionNoteT[]; isLoading: boolean }) => {
-  if (isLoading) return <Typography color="text.secondary">Loading session notes...</Typography>;
+  if (isLoading) return <SessionNotesSkeleton />;
   if (!notes?.length) return <Typography color="text.secondary">No session notes available yet.</Typography>;
 
   return (
